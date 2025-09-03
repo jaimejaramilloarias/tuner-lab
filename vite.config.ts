@@ -1,8 +1,14 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { readFileSync } from 'fs'
 
-// Cambia 'tuner-lab' por el nombre de tu repo si usas GitHub Pages
-export default defineConfig({
+// Derive base path from package.json name for GitHub Pages deployment
+const { name } = JSON.parse(
+  readFileSync(new URL('./package.json', import.meta.url), 'utf-8')
+)
+
+export default defineConfig(({ command }) => ({
   plugins: [react()],
-  base: '/tuner-lab/',
-})
+  base: command === 'build' ? `/${name}/` : '/',
+}))
+
