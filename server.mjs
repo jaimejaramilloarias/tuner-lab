@@ -13,11 +13,18 @@ const mimeTypes = {
   '.json': 'application/json',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
-  '.svg': 'image/svg+xml'
+  '.svg': 'image/svg+xml',
+  '.ts': 'text/javascript',
+  '.tsx': 'text/javascript'
 };
 
+const basePath = '/tuner-lab';
+
 const server = createServer(async (req, res) => {
-  const urlPath = req.url === '/' ? '/index.html' : req.url;
+  let urlPath = req.url === '/' ? '/index.html' : req.url;
+  if (urlPath.startsWith(basePath)) {
+    urlPath = urlPath.slice(basePath.length) || '/index.html';
+  }
   const filePath = join(distDir, urlPath);
   try {
     const data = await readFile(filePath);
