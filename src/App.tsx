@@ -209,7 +209,7 @@ function useAudio() {
     const ctx = ensure();
     if (!masterGainRef.current) {
       masterGainRef.current = ctx.createGain();
-      masterGainRef.current.gain.value = 0.2;
+      masterGainRef.current.gain.value = 0.3;
       masterGainRef.current.connect(ctx.destination);
     }
     return masterGainRef.current!;
@@ -219,7 +219,7 @@ function useAudio() {
 
   type Handle = { osc: OscillatorNode, gain: GainNode };
 
-  const startTone = (freq:number, type:OscillatorType = "triangle", attack=0.01) => {
+  const startTone = (freq:number, type:OscillatorType = "triangle", attack=0.09) => {
     const ctx = ensure();
     const master = ensureMaster();
     const osc = ctx.createOscillator();
@@ -235,7 +235,7 @@ function useAudio() {
     return { osc, gain } as Handle;
   };
 
-  const stopTone = (h:Handle, release=0.1) => {
+  const stopTone = (h:Handle, release=0.08) => {
     const ctx = ensure();
     const now = ctx.currentTime;
     h.gain.gain.cancelScheduledValues(now);
@@ -243,13 +243,13 @@ function useAudio() {
     h.osc.stop(now + Math.max(release,0.01) + 0.05);
   };
 
-  const playOne = async (freq:number, dur=0.8, type:OscillatorType = "triangle", attack=0.01, release=0.12) => {
+  const playOne = async (freq:number, dur=0.2, type:OscillatorType = "triangle", attack=0.09, release=0.08) => {
     const h = startTone(freq, type, attack);
     await new Promise(res => setTimeout(res, Math.max(0, dur*1000)));
     stopTone(h, release);
   };
 
-  const playAB = async (fA: number, fB: number, durEach = 0.7, gap = 0.3, attack=0.01, release=0.12) => {
+  const playAB = async (fA: number, fB: number, durEach = 0.2, gap = 0.3, attack=0.09, release=0.08) => {
     await playOne(fA, durEach, "triangle", attack, release);
     await new Promise(res => setTimeout(res, (gap+0.02)*1000));
     await playOne(fB, durEach, "triangle", attack, release);
@@ -272,15 +272,15 @@ function downloadCSV(filename:string, rows: string[][]){
 export default function App() {
   const [a4, setA4] = useLocalStorage<number>("tl.a4", 440);
   const [input, setInput] = useLocalStorage<string>("tl.input", "C4");
-  const [duration, setDuration] = useLocalStorage<number>("tl.dur", 0.8);
+  const [duration, setDuration] = useLocalStorage<number>("tl.dur", 0.2);
   const [count, setCount] = useLocalStorage<number>("tl.count", 20);
   const [realOctave, setRealOctave] = useLocalStorage<boolean>("tl.realOct", true);
   const [tab, setTab] = useLocalStorage<'arm'|'cmp'>("tl.tab", 'arm');
 
   // Audio params
-  const [volume, setVolume] = useLocalStorage<number>("tl.vol", 0.2);
-  const [attack, setAttack] = useLocalStorage<number>("tl.att", 0.015);
-  const [release, setRelease] = useLocalStorage<number>("tl.rel", 0.12);
+  const [volume, setVolume] = useLocalStorage<number>("tl.vol", 0.3);
+  const [attack, setAttack] = useLocalStorage<number>("tl.att", 0.09);
+  const [release, setRelease] = useLocalStorage<number>("tl.rel", 0.08);
   const [gapAB, setGapAB] = useLocalStorage<number>("tl.gap", 0.35);
 
   // Menú de visibilidad de columnas (por defecto: solo Justo + Notas)
